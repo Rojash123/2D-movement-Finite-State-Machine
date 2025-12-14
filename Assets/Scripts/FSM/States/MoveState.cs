@@ -15,13 +15,9 @@ public class MoveState : PlayerGroundedState
     }
     void HandleIdle()
     {
-        if (player.moveVector.x == 0)
-        {
+        if (player.moveVector.x == 0 || player.isWallDetected)
             fsm.ChangeState(player.idleState);
-        }
-        else
-        {
-            player.MovePlayer();
-        }
+
+        player.MovePlayer();
     }
 }

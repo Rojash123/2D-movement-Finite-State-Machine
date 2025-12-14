@@ -17,7 +17,7 @@ public class JumpState : PlayerAirState
     public override void Update()
     {
         base.Update();
-        if (player.rb.linearVelocityY <= 0)
+        if (player.rb.linearVelocityY <= 0 && fsm.currentState!=player.jumpAttackState)
         {
             fsm.ChangeState(player.fallState);
         }

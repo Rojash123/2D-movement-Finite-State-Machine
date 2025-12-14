@@ -10,10 +10,15 @@ public class PlayerAirState : Entity
     }
     public override void Update()
     {
+        if (player.InputAction.Player.Attack.WasPerformedThisFrame())
+        {
+            fsm.ChangeState(player.jumpAttackState);
+        }
         base.Update();
         if (player.moveVector.x != 0)
         {
             player.MovePlayerAir();
         }
+
     }
 }

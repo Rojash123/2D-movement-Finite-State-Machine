@@ -6,7 +6,7 @@ using static PlayerMovement;
 [CreateAssetMenu(fileName = "InputReader", menuName = "Scriptable Objects/InputReader")]
 public class InputReader : ScriptableObject, IPlayerActions
 {
-    private PlayerMovement playerMovement;
+    public PlayerMovement playerMovement;
 
     public event Action<bool> OnPlayerJump;
     public event Action<bool> OnPlayerAttack;
@@ -30,19 +30,17 @@ public class InputReader : ScriptableObject, IPlayerActions
         if (context.performed)
         {
             OnPlayerAttack?.Invoke(true);
+            return;
         }
-        else
-        {
-            OnPlayerAttack?.Invoke(false);
-        }
+        OnPlayerAttack?.Invoke(false);
     }
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.started)
         {
             OnPlayerJump?.Invoke(true);
         }
-        else
+        if (context.canceled)
         {
             OnPlayerJump?.Invoke(false);
         }
@@ -51,16 +49,14 @@ public class InputReader : ScriptableObject, IPlayerActions
     {
         OnPlayerMove?.Invoke(context.ReadValue<Vector2>());
     }
-
     public void OnDash(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
             OnPlayerDash?.Invoke(true);
+            return;
         }
-        else
-        {
-            OnPlayerDash?.Invoke(false);
-        }
+        OnPlayerDash?.Invoke(false);
+        return;
     }
 }
