@@ -107,7 +107,7 @@ public partial class @PlayerMovement: IInputActionCollection2, IDisposable
                     ""id"": ""b880ead1-5e6e-485c-9e04-7600ec84d0c5"",
                     ""expectedControlType"": """",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""initialStateCheck"": false
                 },
                 {
@@ -116,7 +116,7 @@ public partial class @PlayerMovement: IInputActionCollection2, IDisposable
                     ""id"": ""c377b9b0-a357-46a9-92cb-870e0da1a248"",
                     ""expectedControlType"": """",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""initialStateCheck"": false
                 },
                 {
@@ -125,7 +125,7 @@ public partial class @PlayerMovement: IInputActionCollection2, IDisposable
                     ""id"": ""bcbd2b06-e681-4bd3-bc07-627c444913eb"",
                     ""expectedControlType"": """",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""initialStateCheck"": false
                 }
             ],

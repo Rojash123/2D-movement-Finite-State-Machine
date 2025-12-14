@@ -1,10 +1,21 @@
+using System.Collections;
 using System.Data;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
 
 public class Player : MonoBehaviour
 {
     [Header("Player Input")]
     [SerializeField] InputReader inputReader;
+    public PlayerMovement InputAction;
+
+    [Header("Attack Details")]
+    public Vector2[] attackVelocity;
+    public Vector2 jumpAttackVelocity;
+    public float attackDuration=0.1f;
+    public float comboResetDuration = 1f;
+    private Coroutine attackQueuedCoRoutine;
 
     [Header("Movement")]
     [SerializeField] private float moveMentSpeed;
@@ -22,6 +33,10 @@ public class Player : MonoBehaviour
     [SerializeField] private float groundCheckDistance;
     [SerializeField] private float wallCheckDistance;
     [SerializeField] private LayerMask whatIsGround;
+    [SerializeField] private Transform primaryWallCheck;
+    [SerializeField] private Transform secondaryWallCheck;
+
+
     public bool isGrounded {  get; private set; }
     public bool isWallDetected { get; private set; }
 
@@ -42,18 +57,12 @@ public class Player : MonoBehaviour
     public PlayerWallSlideState wallSlideState { get; private set; }
     public WallJumpState walljumpState { get; private set; }
     public Dashstate dashState { get; private set; }
+    public AttackState attackState { get; private set; }
+    public JumpAttackState jumpAttackState { get; private set; }
+
     #endregion
 
-
-    public bool isJump;
-    public bool iSAttack;
-    public bool isDash;
     public Vector2 moveVector;
-
-    private void OnDrawGizmos()
-    {
-        
-    }
 
     private void Awake()
     {
@@ -68,22 +77,35 @@ public class Player : MonoBehaviour
         wallSlideState = new(fsm,"wallslide",this);
         walljumpState = new(fsm, "jumpfall", this);
         dashState = new(fsm,"dash", this);
+        attackState = new(fsm,"basicattack", this);
+        jumpAttackState = new(fsm, "playerjumpattack", this);
 
 
         inputReader.OnPlayerMove += HandleMove;
-        inputReader.OnPlayerJump += HandleJump;
-        inputReader.OnPlayerAttack += HandleAttack;
-        inputReader.OnPlayerDash += HandleDash;
     }
 
-    private void HandleDash(bool isDash)
+    public void CallAnimationTrigger()
     {
-        this.isDash = isDash;
+        fsm.currentState.CallAnimationTrigger();
     }
 
+    public void EnterAttackStateWithDelay()
+    {
+        if (attackQueuedCoRoutine != null)
+            StopCoroutine(attackQueuedCoRoutine);
+
+        attackQueuedCoRoutine=StartCoroutine(EnterAttackStateCoroutine());
+    }
+
+    private IEnumerator EnterAttackStateCoroutine()
+    {
+        yield return new WaitForEndOfFrame();
+        fsm.ChangeState(attackState);
+    }
     private void Start()
     {
         fsm.InititalizeMethod(idleState);
+        InputAction = inputReader.playerMovement;
     }
     private void Update()
     {
@@ -93,16 +115,6 @@ public class Player : MonoBehaviour
     private void OnDestroy()
     {
         inputReader.OnPlayerMove -= HandleMove;
-        inputReader.OnPlayerJump -= HandleJump;
-        inputReader.OnPlayerAttack -= HandleAttack;
-    }
-    private void HandleAttack(bool attack)
-    {
-        iSAttack = attack;
-    }
-    private void HandleJump(bool jump)
-    {
-        isJump = jump;
     }
     private void HandleMove(Vector2 move)
     {
@@ -124,7 +136,6 @@ public class Player : MonoBehaviour
     }
     public void SetVelocity(float xVelocity,float yVelocity)
     {
-        Debug.Log($"{xVelocity}:{yVelocity}");
         rb.linearVelocity = new Vector2(xVelocity, yVelocity);
         HandleFlip(xVelocity);
     }
@@ -142,7 +153,10 @@ public class Player : MonoBehaviour
     private void HandleCollission()
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
-        isWallDetected = Physics2D.Raycast(transform.position, Vector2.right*facingDir, wallCheckDistance, whatIsGround);
+        isWallDetected = 
+            Physics2D.Raycast(primaryWallCheck.position, Vector2.right*facingDir, wallCheckDistance, whatIsGround)
+            && Physics2D.Raycast(secondaryWallCheck.position, Vector2.right * facingDir, wallCheckDistance, whatIsGround)
+            ;
     }
     public void Flip()
     {

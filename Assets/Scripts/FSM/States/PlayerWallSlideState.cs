@@ -8,11 +8,16 @@ public class PlayerWallSlideState : Entity
         this.animBoolName = stateName;
         this.player = player;
     }
+
+    public override void EnterState()
+    {
+        base.EnterState();
+    }
     public override void Update()
     {
         base.Update();
         wallSlide();
-        if (player.isJump)
+        if (player.InputAction.Player.Jump.WasPerformedThisFrame())
         {
             fsm.ChangeState(player.walljumpState);
         }

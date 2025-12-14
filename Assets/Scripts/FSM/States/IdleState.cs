@@ -21,6 +21,7 @@ public class IdleState : PlayerGroundedState
     }
     void HandleMove()
     {
+        if (player.moveVector.x == player.facingDir && player.isWallDetected) return;
         if (player.moveVector.x != 0)
         {
             fsm.ChangeState(player.moveState);

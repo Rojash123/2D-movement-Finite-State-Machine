@@ -13,7 +13,7 @@ public class Dashstate : Entity
     public override void EnterState()
     {
         base.EnterState();
-        stateTimer = 1;
+        stateTimer = player.dashDuration;
         originalGravityScale = rb.gravityScale;
         rb.gravityScale = 0;
     }
