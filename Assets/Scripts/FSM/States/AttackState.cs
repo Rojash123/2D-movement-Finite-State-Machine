@@ -1,7 +1,7 @@
 using UnityEditor.SceneTemplate;
 using UnityEngine;
 
-public class AttackState : Entity
+public class AttackState : PlayerState
 {
     private bool attackComboQueued;
 

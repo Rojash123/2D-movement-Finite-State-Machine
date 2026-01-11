@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerWallSlideState : Entity
+public class PlayerWallSlideState : PlayerState
 {
     public PlayerWallSlideState(FiniteStateMachine finiteStateMachine, string stateName, Player player) : base(finiteStateMachine, stateName, player)
     {
@@ -27,8 +27,9 @@ public class PlayerWallSlideState : Entity
         }
         if (player.isGrounded)
         {
-            player.Flip();
             fsm.ChangeState(player.idleState);
+            if(player.facingDir!=player.moveVector.x)
+                player.Flip();
         }
     }
     private void wallSlide()
