@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Dashstate : Entity
+public class Dashstate : PlayerState
 {
     private float originalGravityScale;
     public Dashstate(FiniteStateMachine finiteStateMachine, string stateName, Player player) : base(finiteStateMachine, stateName, player)

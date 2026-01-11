@@ -2,15 +2,15 @@ using UnityEngine;
 
 public class FiniteStateMachine
 {
-    public Entity currentState {  get; private set; }
+    public EntityState currentState {  get; private set; }
 
-    public void InititalizeMethod(Entity state)
+    public void InititalizeMethod(EntityState state)
     {
         currentState = state;
         currentState.EnterState();
     }
 
-    public void ChangeState(Entity newState)
+    public void ChangeState(EntityState newState)
     {
         currentState.ExitState();
         currentState = newState;

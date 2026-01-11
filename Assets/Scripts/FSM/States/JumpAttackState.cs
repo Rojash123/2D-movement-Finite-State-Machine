@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class JumpAttackState : Entity
+public class JumpAttackState : PlayerState
 {
     private bool touchGround;
     public JumpAttackState(FiniteStateMachine finiteStateMachine, string stateName, Player player) : base(finiteStateMachine, stateName, player)
