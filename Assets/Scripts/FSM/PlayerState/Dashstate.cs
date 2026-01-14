@@ -25,7 +25,7 @@ public class Dashstate : PlayerState
         CancelDashIfNeeded();
         if (stateTimer < 0)
         {
-            if (player.isGrounded)
+            if (player.isGroundCheck)
             {
                 fsm.ChangeState(player.idleState);
             }
@@ -45,7 +45,7 @@ public class Dashstate : PlayerState
     {
         if (player.isWallDetected)
         {
-            if (player.isGrounded)
+            if (player.isGroundCheck)
             {
                 fsm.ChangeState(player.idleState);
             }

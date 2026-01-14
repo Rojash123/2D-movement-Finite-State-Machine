@@ -65,7 +65,7 @@ public class Player : Entity
     {
         inputReader.OnPlayerMove -= HandleMove;
     }
-    
+
     public override void MovePlayer()
     {
         SetVelocity(moveVector.x * moveMentSpeed, rb.linearVelocityY);

@@ -12,7 +12,7 @@ public class PlayerGroundedState : PlayerState
     {
         base.Update();
 
-        if(rb.linearVelocityY<0 && !player.isGrounded)
+        if(rb.linearVelocityY<0 && !player.isGroundCheck)
         {
             fsm.ChangeState(player.fallState);
         }

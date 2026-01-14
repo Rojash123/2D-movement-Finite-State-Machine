@@ -25,7 +25,7 @@ public class PlayerWallSlideState : PlayerState
         {
             fsm.ChangeState(player.fallState);
         }
-        if (player.isGrounded)
+        if (player.isGroundCheck)
         {
             fsm.ChangeState(player.idleState);
             if(player.facingDir!=player.moveVector.x)

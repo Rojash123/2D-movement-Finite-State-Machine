@@ -11,7 +11,7 @@ public class FallState : PlayerAirState
     public override void Update()
     {
         base.Update();
-        if (player.isGrounded)
+        if (player.isGroundCheck)
         {
             fsm.ChangeState(player.idleState);
         }
