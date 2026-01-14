@@ -18,14 +18,14 @@ public class JumpAttackState : PlayerState
     public override void Update()
     {
         base.Update();
-        if (player.isGrounded && !touchGround) 
+        if (player.isGroundCheck && !touchGround) 
         {
             touchGround = true;
             anim.SetTrigger("jumpattackTrigger");
             player.SetVelocity(0, rb.linearVelocityY);
         }
 
-        if(player.isGrounded && triggerCalled)
+        if(player.isGroundCheck && triggerCalled)
         {
             fsm.ChangeState(player.idleState);
         }
