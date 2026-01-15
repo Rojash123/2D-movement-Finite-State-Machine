@@ -12,15 +12,14 @@ public class Enemy_BattleState : EnemyState
     {
         base.EnterState();
 
-        if (player == null)
-            player = enemy.PlayerDetection().transform;
+        UpdateBattleTimer();
+        player ??= enemy.GetPlayerReference();
 
         if (shouldRetreat())
         {
             rb.linearVelocity = new Vector2(enemy.retreatVelocity.x * -DirectionToPlayer(), enemy.retreatVelocity.y);
             enemy.HandleFlip(DirectionToPlayer());
         }
-
     }
     public override void Update()
     {
