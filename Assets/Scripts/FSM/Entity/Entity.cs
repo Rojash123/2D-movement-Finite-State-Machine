@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Entity : MonoBehaviour
@@ -23,6 +24,8 @@ public class Entity : MonoBehaviour
     [SerializeField] private Transform primaryWallCheck;
     [SerializeField] private Transform secondaryWallCheck;
 
+    private bool isKnocked;
+    private Coroutine knockBackCoroutine;
 
     public bool isGroundCheck { get; private set; }
     public bool isWallDetected { get; private set; }
@@ -40,6 +43,25 @@ public class Entity : MonoBehaviour
     public void CallAnimationTrigger()
     {
         fsm.currentState.CallAnimationTrigger();
+    }
+    public virtual void EntityDeath()
+    {
+
+    }
+    public void ReceiveKnockBack(Vector2 knockBackDir, float duration)
+    {
+        if (knockBackCoroutine != null)
+            StopCoroutine(knockBackCoroutine);
+
+        knockBackCoroutine = StartCoroutine(knockBackCo(knockBackDir,duration));
+    }
+    private IEnumerator knockBackCo(Vector2 knockBackForce,float duration)
+    {
+        isKnocked = true;
+        rb.linearVelocity= knockBackForce;
+        yield return new WaitForSeconds(duration);
+        isKnocked = false;
+        rb.linearVelocity = Vector2.zero;
     }
 
     protected virtual void Start()
@@ -65,6 +87,9 @@ public class Entity : MonoBehaviour
     }
     public void SetVelocity(float xVelocity, float yVelocity)
     {
+        if (isKnocked)
+            return;
+
         rb.linearVelocity = new Vector2(xVelocity, yVelocity);
         HandleFlip(xVelocity);
     }

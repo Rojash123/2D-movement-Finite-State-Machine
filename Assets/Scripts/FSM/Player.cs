@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Data;
 using UnityEngine;
@@ -6,6 +7,8 @@ using UnityEngine.Rendering.Universal;
 
 public class Player : Entity
 {
+    public static event Action OnPlayerDeath;
+
     [Header("Player Input")]
     [SerializeField] InputReader inputReader;
     public PlayerMovement InputAction;
@@ -34,6 +37,8 @@ public class Player : Entity
     public Dashstate dashState { get; private set; }
     public AttackState attackState { get; private set; }
     public JumpAttackState jumpAttackState { get; private set; }
+    public Player_DeadState deadState { get; private set; }
+
 
     #endregion
 
@@ -49,6 +54,7 @@ public class Player : Entity
         dashState = new(fsm, "dash", this);
         attackState = new(fsm, "basicattack", this);
         jumpAttackState = new(fsm, "playerjumpattack", this);
+        deadState = new(fsm, "dead", this);
     }
 
     protected override void Start()
@@ -64,6 +70,18 @@ public class Player : Entity
     private void OnDisable()
     {
         inputReader.OnPlayerMove -= HandleMove;
+    }
+
+    public void DisableInput()
+    {
+        inputReader.DisableInput();
+        InputAction.Disable();
+    }
+    public override void EntityDeath()
+    {
+        base.EntityDeath();
+        OnPlayerDeath?.Invoke();
+        fsm.ChangeState(deadState);
     }
 
     public override void MovePlayer()

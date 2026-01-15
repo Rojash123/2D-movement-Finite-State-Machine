@@ -25,6 +25,11 @@ public class InputReader : ScriptableObject, IPlayerActions
     {
         playerMovement.Disable();
     }
+
+    public void DisableInput()
+    {
+        playerMovement.Disable();
+    }
     public void OnAttack(InputAction.CallbackContext context)
     {
         if (context.performed)
