@@ -38,7 +38,7 @@ public class Player : Entity
     public AttackState attackState { get; private set; }
     public JumpAttackState jumpAttackState { get; private set; }
     public Player_DeadState deadState { get; private set; }
-
+    public playerCounterAttackState counterAttackState { get; private set; }
 
     #endregion
 
@@ -55,6 +55,7 @@ public class Player : Entity
         attackState = new(fsm, "basicattack", this);
         jumpAttackState = new(fsm, "playerjumpattack", this);
         deadState = new(fsm, "dead", this);
+        counterAttackState = new(fsm, "counterattack", this);
     }
 
     protected override void Start()
@@ -83,7 +84,43 @@ public class Player : Entity
         OnPlayerDeath?.Invoke();
         fsm.ChangeState(deadState);
     }
+    protected override IEnumerator SlowDownEntityCoroutine(float duration, float slowMultiplier)
+    {
+        float originalMoveSpeed = moveMentSpeed;
+        float originaljumpForce = jumpForce;
+        float originalAnimSpeed = animator.speed;
 
+        Vector2 originalWallJump = wallJumpDirection;
+        Vector2 originalJumpAttackVelocity = jumpAttackVelocity;
+        Vector2[] originalAttackVelocity = new Vector2[attackVelocity.Length];
+        Array.Copy(attackVelocity,originalAttackVelocity, attackVelocity.Length);
+
+        float speedMultiplier = 1 - slowMultiplier;
+
+        moveMentSpeed *= speedMultiplier;
+        jumpForce *= speedMultiplier;
+        animator.speed *= speedMultiplier;
+        wallJumpDirection *= speedMultiplier;
+        jumpAttackVelocity *= speedMultiplier;
+
+        for (int i = 0; i < attackVelocity.Length; i++) 
+        {
+            originalAttackVelocity[i]*=speedMultiplier;
+        }
+        yield return new WaitForSeconds(duration);
+
+        moveMentSpeed = originalMoveSpeed;
+        jumpForce = originaljumpForce;
+        animator.speed = originalAnimSpeed;
+        wallJumpDirection = originalWallJump;
+        jumpAttackVelocity = originalJumpAttackVelocity;
+        attackVelocity= originalAttackVelocity;
+        for (int i = 0; i < originalAttackVelocity.Length; i++)
+        {
+            attackVelocity[i] = originalAttackVelocity[i];
+            ;
+        }
+    }
     public override void MovePlayer()
     {
         SetVelocity(moveVector.x * moveMentSpeed, rb.linearVelocityY);

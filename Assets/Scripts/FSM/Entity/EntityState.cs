@@ -8,6 +8,7 @@ public abstract class EntityState
     protected Rigidbody2D rb;
     protected float stateTimer;
     protected bool triggerCalled;
+    protected Entity_Stats entityStats;
 
     public EntityState(FiniteStateMachine finiteStateMachine, string stateName)
     {
@@ -35,5 +36,10 @@ public abstract class EntityState
     public virtual void UpdateAnimationParameter()
     {
 
+    }
+    public void SyncAttackSpeed()
+    {
+        float attackSpeed = entityStats.offense.attackSpeed.GetValue;
+        anim.SetFloat("attackSpeedMultiplier", attackSpeed);
     }
 }

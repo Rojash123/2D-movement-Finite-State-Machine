@@ -64,4 +64,8 @@ public class InputReader : ScriptableObject, IPlayerActions
         OnPlayerDash?.Invoke(false);
         return;
     }
+
+    public void OnCounter(InputAction.CallbackContext context)
+    {
+    }
 }

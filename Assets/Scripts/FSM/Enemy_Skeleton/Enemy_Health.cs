@@ -3,14 +3,15 @@ using UnityEngine;
 public class Enemy_Health : Entity_Health
 {
     private Enemy enemy => GetComponent<Enemy>();
-    public override void TakeDamage(float damage,Transform damageDealer)
+    public override bool TakeDamage(float damage,float elementalDamage, ElementType element, Transform damageDealer)
     {
-        base.TakeDamage(damage,damageDealer);
+        var takenDamage = base.TakeDamage(damage,elementalDamage,element, damageDealer);
 
-        if (isDead) return;
+        if (!takenDamage) return false;
 
-        if (damageDealer.GetComponent<Player>()!=null)
+        if (damageDealer.GetComponent<Player>() != null)
             enemy.TryEnterBattleState(damageDealer);
 
+        return true;
     }
 }
