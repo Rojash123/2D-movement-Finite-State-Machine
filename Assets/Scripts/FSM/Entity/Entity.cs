@@ -1,10 +1,13 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
+    public event Action OnFlip;
     public Animator animator { get; private set; }
     public Rigidbody2D rb { get; private set; }
+    public Entity_Stats entityStats;
     public FiniteStateMachine fsm { get; private set; }
 
     [SerializeField] protected float moveMentSpeed;
@@ -26,6 +29,7 @@ public class Entity : MonoBehaviour
 
     private bool isKnocked;
     private Coroutine knockBackCoroutine;
+    private Coroutine slowDownCoroutine;
 
     public bool isGroundCheck { get; private set; }
     public bool isWallDetected { get; private set; }
@@ -39,6 +43,7 @@ public class Entity : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
         fsm = new();
+        entityStats = GetComponent<Entity_Stats>();
     }
     public void CallAnimationTrigger()
     {
@@ -53,17 +58,29 @@ public class Entity : MonoBehaviour
         if (knockBackCoroutine != null)
             StopCoroutine(knockBackCoroutine);
 
-        knockBackCoroutine = StartCoroutine(knockBackCo(knockBackDir,duration));
+        knockBackCoroutine = StartCoroutine(knockBackCo(knockBackDir, duration));
     }
-    private IEnumerator knockBackCo(Vector2 knockBackForce,float duration)
+    private IEnumerator knockBackCo(Vector2 knockBackForce, float duration)
     {
         isKnocked = true;
-        rb.linearVelocity= knockBackForce;
+        rb.linearVelocity = knockBackForce;
         yield return new WaitForSeconds(duration);
         isKnocked = false;
         rb.linearVelocity = Vector2.zero;
     }
 
+    public virtual void SlowDownPlayer(float duration, float slowMultiplier)
+    {
+        if(slowDownCoroutine != null)
+            StopCoroutine (slowDownCoroutine);
+
+        slowDownCoroutine = StartCoroutine(SlowDownEntityCoroutine(duration,slowMultiplier));
+    }
+
+    protected virtual IEnumerator SlowDownEntityCoroutine(float duration,float slowMultiplier)
+    {
+        yield return null;
+    }
     protected virtual void Start()
     {
 
@@ -131,5 +148,6 @@ public class Entity : MonoBehaviour
         transform.Rotate(0, 180, 0);
         facingRight = !facingRight;
         facingDir = -facingDir;
+        OnFlip?.Invoke();
     }
 }

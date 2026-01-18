@@ -25,5 +25,9 @@ public class PlayerGroundedState : PlayerState
         {
             fsm.ChangeState(player.attackState);
         }
+        if (player.InputAction.Player.Counter.WasPerformedThisFrame())
+        {
+            fsm.ChangeState(player.counterAttackState);
+        }
     }
 }

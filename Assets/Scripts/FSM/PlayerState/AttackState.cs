@@ -25,6 +25,7 @@ public class AttackState : PlayerState
         base.EnterState();
         attackComboQueued = false;
         ResetComboIfNeeded();
+        SyncAttackSpeed();
 
         attackDirection=player.moveVector.x!=0? (int)player.moveVector.x : player.facingDir;
         anim.SetInteger("basicattackindex", comboIndex);

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Enemy : Entity
@@ -16,7 +17,6 @@ public class Enemy : Entity
     public float retreatMinDistance = 1f;
     public Vector2 retreatVelocity;
 
-
     [Header("MovementDetails")]
     public float moveSpeed = 1f;
     public float idleTime = 2f;
@@ -24,7 +24,7 @@ public class Enemy : Entity
     [Header("Stunned Details")]
     public Vector2 stunnedVelocity = new(7, 7);
     public float stunnedDuration = 1f;
-
+    [SerializeField] protected bool canBeStunned;
 
     [Header("Player Detection")]
     [SerializeField] private LayerMask whatIsPlayer;
@@ -36,6 +36,26 @@ public class Enemy : Entity
 
     [Range(0, 2)]
     public float moveanimspeedmultiplier = 1f;
+
+    protected override IEnumerator SlowDownEntityCoroutine(float duration, float slowMultiplier)
+    {
+        float originalMoveSpeed = moveSpeed;
+        float originalBattleSpeed = battleMoveSpeed;
+        float originalAnimSpeed = animator.speed;
+
+        float speedMultiplier = 1 - slowMultiplier;
+
+        moveSpeed *= speedMultiplier;
+        battleMoveSpeed *= speedMultiplier;
+        animator.speed *= speedMultiplier;
+
+        yield return new WaitForSeconds(duration);
+
+        moveSpeed = originalMoveSpeed;
+        battleMoveSpeed = originalBattleSpeed;
+        animator.speed = originalAnimSpeed;
+    }
+
 
     public void TryEnterBattleState(Transform player)
     {
@@ -67,6 +87,9 @@ public class Enemy : Entity
 
         return player;
     }
+
+    public void EnableCounterWindow(bool enable) => canBeStunned = enable;
+
     protected override void Update()
     {
         base.Update();
