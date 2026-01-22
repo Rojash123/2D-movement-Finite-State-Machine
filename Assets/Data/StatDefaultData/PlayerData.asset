@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c78a6d3862d29e64aaf536c9447090e4, type: 3}
+  m_Name: PlayerData
+  m_EditorClassIdentifier: 
+  maxHealth: 1000
+  healthRegen: 10
+  aligity: 0
+  strength: 0
+  vitality: 7
+  intelligence: 0
+  attackSpeed: 1
+  damage: 0
+  criticalPower: 250
+  critChance: 10
+  armorReduction: 0
+  fireDamage: 10
+  iceDamage: 0
+  lightningDamage: 0
+  armor: 50
+  evasion: 0
+  fireRes: 0
+  iceRes: 0
+  lightningRes: 0
