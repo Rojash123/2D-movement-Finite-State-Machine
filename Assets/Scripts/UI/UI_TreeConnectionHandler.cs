@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -37,6 +38,7 @@ public class UI_TreeConnectionHandler : MonoBehaviour
         }
         UpdateConnection();
     }
+
     public void UpdateConnection()
     {
         for (int i = 0; i < details.Length; i++)
@@ -53,6 +55,19 @@ public class UI_TreeConnectionHandler : MonoBehaviour
             details[i].childNode.transform.SetAsLastSibling();
         }
     }
+
+    public UI_Treenode[] GetChildNodes()
+    {
+        List<UI_Treenode> childToReturn= new List<UI_Treenode>();
+        foreach (var item in details)
+        {
+            if(item.childNode != null)
+                childToReturn.Add(item.childNode.GetComponent<UI_Treenode>());
+        }
+
+        return childToReturn.ToArray();
+    }
+
     public void UpdateALlTreeConnections()
     {
         UpdateConnection();

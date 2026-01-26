@@ -35,6 +35,12 @@ public class UI_Treenode : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         skillTree = GetComponentInParent<UI_SkillTree>();
         treeConnectionHandler = GetComponent<UI_TreeConnectionHandler>();
     }
+
+    private void Start()
+    {
+        if (skillData.unlockByDefault)
+            Unlock();
+    }
     private void OnValidate()
     {
         if (skillData == null) return;
@@ -67,10 +73,11 @@ public class UI_Treenode : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         UpdateColor(Color.white);
         LockedConflictNode();
-        UpdateColor(GetColorByHex(lockedColorCode));
 
         skillTree.RemoveSkillPoint(skillData.cost);
         treeConnectionHandler.UnlockConnectionImage(true);
+
+        skillTree.skillManager.GetSkillByType(SkillData.skillType).SetSkillUpgrade(SkillData.upgradeData);
     }
 
     private bool CanbeUnlocked()
@@ -92,7 +99,10 @@ public class UI_Treenode : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     private void LockedConflictNode()
     {
         foreach (var node in conflictingNode)
+        {
             node.isLocked = true;
+            node.LockChildNodes();
+        }
     }
 
     private void UpdateColor(Color color)
@@ -106,24 +116,35 @@ public class UI_Treenode : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     private void ToggleNodeHighLights(bool highlight)
     {
         Color highlightColor = Color.white * 0.9f; highlightColor.a = 1;
-        Color colorToApply = highlight?highlightColor:lastColor;
+        Color colorToApply = highlight ? highlightColor : lastColor;
         UpdateColor(colorToApply);
+    }
+
+    public void LockChildNodes()
+    {
+        isLocked = true;
+        foreach (var node in treeConnectionHandler.GetChildNodes())
+        {
+            node.LockChildNodes();
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         ui.toolTip.ShowToolTip(true, rect, this);
 
-        if (!isUnlocked && !isLocked)
-            ToggleNodeHighLights(true);
+        if (isUnlocked || isLocked) return;
+
+        ToggleNodeHighLights(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         ui.toolTip.ShowToolTip(false, rect);
 
-        if (!isUnlocked && !isLocked)
-            ToggleNodeHighLights(false);
+        if (isUnlocked || isLocked) return;
+
+        ToggleNodeHighLights(false);
     }
 
     public void OnPointerDown(PointerEventData eventData)
