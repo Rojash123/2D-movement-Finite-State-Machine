@@ -13,7 +13,9 @@ public class Dashstate : PlayerState
     public override void EnterState()
     {
         base.EnterState();
+        skillManager.dash.OnStartEffect();
         stateTimer = player.dashDuration;
+        player.vfx.DoImageEffect(player.dashDuration);
         originalGravityScale = rb.gravityScale;
         rb.gravityScale = 0;
     }
@@ -39,6 +41,7 @@ public class Dashstate : PlayerState
     {
         player.SetVelocity(0, 0);
         rb.gravityScale = originalGravityScale;
+        skillManager.dash.OnEndEffect();
         base.ExitState();
     }
     void CancelDashIfNeeded()

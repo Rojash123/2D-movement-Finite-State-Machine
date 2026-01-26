@@ -11,6 +11,7 @@ public class InputReader : ScriptableObject, IPlayerActions
     public event Action<bool> OnPlayerJump;
     public event Action<bool> OnPlayerAttack;
     public event Action<bool> OnPlayerDash;
+    public event Action<bool> OnPlayerSpellPressed;
     public event Action<Vector2> OnPlayerMove;
     private void OnEnable()
     {
@@ -67,5 +68,16 @@ public class InputReader : ScriptableObject, IPlayerActions
 
     public void OnCounter(InputAction.CallbackContext context)
     {
+    }
+    public void OnSpell(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            OnPlayerSpellPressed?.Invoke(true);
+        }
+        if (context.canceled)
+        {
+            OnPlayerSpellPressed?.Invoke(false);
+        }
     }
 }

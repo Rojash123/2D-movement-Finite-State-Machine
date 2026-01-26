@@ -9,6 +9,12 @@ public class Player : Entity
 {
     public static event Action OnPlayerDeath;
 
+    public Player_SkillManager skillManager {  get; private set; }
+    public Entity_Health playerHealth { get; private set; }
+
+    public Player_VFX vfx { get; private set; }
+
+
     [Header("Player Input")]
     [SerializeField] InputReader inputReader;
     public PlayerMovement InputAction;
@@ -45,6 +51,11 @@ public class Player : Entity
     protected override void Awake()
     {
         base.Awake();
+
+        skillManager = GetComponent<Player_SkillManager>();
+        playerHealth = GetComponent<Entity_Health>();
+        vfx = GetComponent<Player_VFX>();
+
         idleState = new(fsm, "idle", this);
         moveState = new(fsm, "move", this);
         jumpState = new(fsm, "jumpfall", this);
@@ -63,7 +74,9 @@ public class Player : Entity
         base.Start();
         fsm.InititalizeMethod(idleState);
         InputAction = inputReader.playerMovement;
+        InputAction.Player.Spell.performed += ctx=>skillManager.shard.TryUSeSkill();
     }
+
     private void OnEnable()
     {
         inputReader.OnPlayerMove += HandleMove;
@@ -72,6 +85,9 @@ public class Player : Entity
     {
         inputReader.OnPlayerMove -= HandleMove;
     }
+
+    public void TeleportPlayer(Vector3 position) => transform.position = position;
+    
 
     public void DisableInput()
     {

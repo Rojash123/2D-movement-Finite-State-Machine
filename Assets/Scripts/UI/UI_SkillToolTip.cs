@@ -55,6 +55,7 @@ public class UI_SkillToolTip : UI_ToolTip
 
         foreach (var item in neededNodes)
         {
+            if (item == null) continue;
             string nodeColor = item.isUnlocked ? metCondition : notMetCondition;
             sb.AppendLine($"<color={nodeColor}> {item.SkillData.skillName}</color>");
         }
@@ -66,6 +67,7 @@ public class UI_SkillToolTip : UI_ToolTip
         sb.AppendLine("Locks Out");
         foreach (var item in conflictNodes)
         {
+            if(item==null) continue;
             sb.AppendLine($"<color={importantAnnouncement}> {item.SkillData.skillName}</color>");
         }
 

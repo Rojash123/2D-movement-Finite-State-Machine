@@ -4,7 +4,7 @@ using UnityEngine.InputSystem.Android;
 
 public class Entity_VFX : MonoBehaviour
 {
-    private SpriteRenderer spriteRenderer;
+    protected SpriteRenderer spriteRenderer;
     private Entity entity;
 
     [Header("On Damage VFX")]
@@ -25,7 +25,7 @@ public class Entity_VFX : MonoBehaviour
     [SerializeField] private Color lightningColor = Color.yellow;
     private Color originalVFXColor;
 
-    
+
     private void Awake()
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -33,24 +33,29 @@ public class Entity_VFX : MonoBehaviour
         entity = GetComponent<Entity>();
         originalVFXColor = vfxColor;
     }
-    public void CreateHitVFX(Transform spawnPos, bool isCrit)
+    public void CreateHitVFX(Transform spawnPos, bool isCrit,ElementType element)
     {
         GameObject prefab = isCrit ? critvfxHit : vfxHit;
         var vfxObj = Instantiate(prefab, spawnPos.position, Quaternion.identity);
 
         if (!isCrit)
-            vfxObj.GetComponentInChildren<SpriteRenderer>().color = vfxColor;
+            vfxObj.GetComponentInChildren<SpriteRenderer>().color = GetElementColor(element);
 
         if (entity.facingDir == -1 && isCrit)
             vfxObj.transform.Rotate(0, 180, 0);
     }
-    public void UpdateOnHitColor(ElementType element)
+    public Color GetElementColor(ElementType element)
     {
-        vfxColor = element switch
+        switch (element)
         {
-            ElementType.Ice => chillColor,
-            _ => originalVFXColor,
-        };
+            case ElementType.Ice:
+                return chillColor;
+            case ElementType.Fire: 
+                return burnColor;
+            default:
+                return Color.white;
+        }
+        ;
     }
     public void PlayOnDamageVFX()
     {
@@ -65,10 +70,10 @@ public class Entity_VFX : MonoBehaviour
         yield return new WaitForSeconds(vfxDuration);
         spriteRenderer.material = originalMaterial;
     }
-    public void PlayOnStatusVFX(float duration,ElementType element)
+    public void PlayOnStatusVFX(float duration, ElementType element)
     {
         if (element == ElementType.Ice)
-            StartCoroutine(PlayStatusVfxCo(duration,chillColor));
+            StartCoroutine(PlayStatusVfxCo(duration, chillColor));
 
         if (element == ElementType.Fire)
             StartCoroutine(PlayStatusVfxCo(duration, burnColor));
@@ -79,8 +84,8 @@ public class Entity_VFX : MonoBehaviour
     public void StopAllVFX()
     {
         StopAllCoroutines();
-        spriteRenderer.color=Color.white;
-        spriteRenderer.material=originalMaterial;
+        spriteRenderer.color = Color.white;
+        spriteRenderer.material = originalMaterial;
     }
     private IEnumerator PlayStatusVfxCo(float duration, Color colorEffect)
     {

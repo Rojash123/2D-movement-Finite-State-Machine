@@ -35,17 +35,13 @@ public class UI_ToolTip : MonoBehaviour
         float bottom = rectTransform.position.y - verticalHalf;
 
         if (top > screenTop)
-        {
             targetPos.y = screenTop - verticalHalf - offset.y;
-        }
         else if (bottom < screenBottom)
             targetPos.y = screenBottom + verticalHalf + offset.y;
 
+        targetPos.x = targetPos.x > screenCentreX ? targetPos.x - offset.x : targetPos.x + offset.x;
 
-            targetPos.x = targetPos.x > screenCentreX ? targetPos.x - offset.x : targetPos.x + offset.x;
-
-
-        rectTransform.position = targetRect.position;
+        rectTransform.position = targetPos;
     }
     protected string GetColouredText(string color, string text)
     {
