@@ -11,6 +11,7 @@ public class UI_SkillToolTip : UI_ToolTip
 
     [SerializeField] private TextMeshProUGUI skillName;
     [SerializeField] private TextMeshProUGUI skillDescription;
+    [SerializeField] private TextMeshProUGUI skillCooldown;
     [SerializeField] private TextMeshProUGUI skillRequirements;
     private string lockedSkillText = "You've taken a different path for this skill & This skill is locked now";
 
@@ -38,8 +39,10 @@ public class UI_SkillToolTip : UI_ToolTip
         base.ShowToolTip(show, targetRectTransform);
         skillName.text = treeNode.SkillData.skillName;
         skillDescription.text = treeNode.SkillData.Description;
+        skillCooldown.text = "Cooldown: " + treeNode.SkillData.upgradeData.coolDown;
 
         string skillLockedText = GetColouredText(importantAnnouncement, lockedSkillText);
+
         string textToSend=treeNode.isLocked?skillLockedText: GetRequirements(treeNode.SkillData.cost, treeNode.neededNode, treeNode.conflictingNode);
 
         skillRequirements.text = textToSend;

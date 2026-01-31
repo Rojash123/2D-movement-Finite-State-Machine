@@ -4,5 +4,7 @@ public enum SkillType
 {
     QuickDash,
     TimeEcho,
-    TimeShard
+    TimeShard,
+    SwordThrow,
+    DomainExpansion
 }

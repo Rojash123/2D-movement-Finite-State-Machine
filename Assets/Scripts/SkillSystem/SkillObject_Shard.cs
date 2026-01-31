@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SkillObject_Shard : SkillObject_Base
@@ -15,12 +16,12 @@ public class SkillObject_Shard : SkillObject_Base
     private void Update()
     {
         if (target == null) return;
-        transform.position=Vector3.MoveTowards(transform.position,target.position,speed*Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
     }
-    public void MoveTowardsClosestTarget(float speed)
+    public void MoveTowardsClosestTarget(float speed, Transform target = null)
     {
-        target = ClosestTarget();
-        this.speed= speed;
+        this.target = target ?? ClosestTarget();
+        this.speed = speed;
     }
     public void SetupShard(Skill_Shard shardManager)
     {
@@ -29,18 +30,21 @@ public class SkillObject_Shard : SkillObject_Base
         stats = shardManager.player.entityStats;
         damageScaleData = shardManager.damageScaleData;
 
-        float detonationTime=shardManager.GetDetonationTime();
+        float detonationTime = shardManager.GetDetonationTime();
         Invoke(nameof(Explode), detonationTime);
     }
-    public void SetupShard(Skill_Shard shardManager,float detonationTime,bool canMove,float shardSpeed)
+    public void SetupShard(Skill_Shard shardManager, float detonationTime, bool canMove, float shardSpeed,Transform target=null)
     {
         this.shardManager = shardManager;
         stats = shardManager.player.entityStats;
         damageScaleData = shardManager.damageScaleData;
 
         Invoke(nameof(Explode), detonationTime);
-        MoveTowardsClosestTarget(shardSpeed);
+
+        if (canMove)
+            MoveTowardsClosestTarget(shardSpeed,target);
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.GetComponent<Enemy>() == null)
@@ -51,8 +55,8 @@ public class SkillObject_Shard : SkillObject_Base
     public void Explode()
     {
         DamageEnemyInRadius(transform, checkRadius);
-        GameObject vfx= Instantiate(vfxPrefab, transform.position, Quaternion.identity);
-        vfx.GetComponentInChildren<SpriteRenderer>().color= shardManager.player.vfx.GetElementColor(element);
+        GameObject vfx = Instantiate(vfxPrefab, transform.position, Quaternion.identity);
+        vfx.GetComponentInChildren<SpriteRenderer>().color = shardManager.player.vfx.GetElementColor(element);
         OnShardExplode?.Invoke();
         Destroy(gameObject);
     }

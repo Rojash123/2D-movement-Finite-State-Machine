@@ -25,7 +25,14 @@ public class Entity_StatusHandler : MonoBehaviour
         entityHealth = GetComponent<Entity_Health>();
     }
 
-    public void ApplyEffect(ElementType element,ElementalEffectData effectData)
+    public void RemoveAllNegativeEffects()
+    {
+        StopAllCoroutines();
+        currentEffect = ElementType.None;
+        entityVFX.StopAllVFX();
+    }
+
+    public void ApplyEffect(ElementType element, ElementalEffectData effectData)
     {
         if (element == ElementType.Ice && canBeApplied(ElementType.Ice))
             ApplyChilldedEffect(effectData.chillDuration, effectData.chillEffect);
@@ -34,10 +41,10 @@ public class Entity_StatusHandler : MonoBehaviour
             ApplyBurnEffect(effectData.burnDuration, effectData.burnDamage);
 
         if (element == ElementType.Lightning && canBeApplied(ElementType.Lightning))
-            ApplyElectrifyEffect(effectData.burnDuration, effectData.burnDamage,effectData.shockCharge);
+            ApplyElectrifyEffect(effectData.burnDuration, effectData.burnDamage, effectData.shockCharge);
 
     }
-    public void ApplyBurnEffect(float duration, float totalDamage)
+    private void ApplyBurnEffect(float duration, float totalDamage)
     {
         float burnResistance = stats.GetEmentalResistance(ElementType.Fire);
         float reducedDuration = (1 - burnResistance) * duration;
@@ -64,7 +71,7 @@ public class Entity_StatusHandler : MonoBehaviour
 
     }
 
-    public void ApplyChilldedEffect(float duration, float slowMultiplier)
+    private void ApplyChilldedEffect(float duration, float slowMultiplier)
     {
         float iceResistance = stats.GetEmentalResistance(ElementType.Ice);
         float reducedDuration = (1 - iceResistance) * duration;
@@ -81,11 +88,11 @@ public class Entity_StatusHandler : MonoBehaviour
         currentEffect = ElementType.None;
     }
 
-    public void ApplyElectrifyEffect(float duration, float totalDamage, float charge)
+    private void ApplyElectrifyEffect(float duration, float totalDamage, float charge)
     {
         float lightningResistance = stats.GetEmentalResistance(ElementType.Lightning);
         float reducedCharge = (1 - lightningResistance) * charge;
-        
+
         currentCharge += reducedCharge;
 
         if (currentCharge > maximumCharge)
@@ -104,7 +111,7 @@ public class Entity_StatusHandler : MonoBehaviour
     {
         currentCharge = 0;
         entityVFX.StopAllVFX();
-        currentEffect= ElementType.None;
+        currentEffect = ElementType.None;
     }
     private void InstantiateLightninfStrike(float totalDamage)
     {

@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Enemy : Entity
 {
+    public Enemy_Health health;
+
     public Enemy_IdleState idleState;
     public Enemy_MoveState moveState;
     public Enemy_AttackState attackState;
@@ -33,29 +35,36 @@ public class Enemy : Entity
 
     public Transform player { get; private set; }
 
+    public float activeSlowMultiplier { get; private set; } = 1f;
+    public float GetMoveSpeed() => moveSpeed * activeSlowMultiplier;
+    public float GetBattleMoveSpeed() => battleMoveSpeed * activeSlowMultiplier;
+
+
 
     [Range(0, 2)]
     public float moveanimspeedmultiplier = 1f;
 
-    protected override IEnumerator SlowDownEntityCoroutine(float duration, float slowMultiplier)
+
+    protected override void Awake()
     {
-        float originalMoveSpeed = moveSpeed;
-        float originalBattleSpeed = battleMoveSpeed;
-        float originalAnimSpeed = animator.speed;
-
-        float speedMultiplier = 1 - slowMultiplier;
-
-        moveSpeed *= speedMultiplier;
-        battleMoveSpeed *= speedMultiplier;
-        animator.speed *= speedMultiplier;
-
-        yield return new WaitForSeconds(duration);
-
-        moveSpeed = originalMoveSpeed;
-        battleMoveSpeed = originalBattleSpeed;
-        animator.speed = originalAnimSpeed;
+        base.Awake();
+        health = GetComponent<Enemy_Health>();
     }
 
+    protected override IEnumerator SlowDownEntityCoroutine(float duration, float slowMultiplier)
+    {
+        activeSlowMultiplier = 1 - slowMultiplier;
+        animator.speed *= activeSlowMultiplier;
+        yield return new WaitForSeconds(duration);
+    }
+
+    public override void StopSlowDown()
+    {
+        base.StopSlowDown();
+        animator.speed = 1f;
+        activeSlowMultiplier = 1f;
+
+    }
 
     public void TryEnterBattleState(Transform player)
     {
