@@ -12,22 +12,19 @@ public class PlayerGroundedState : PlayerState
     {
         base.Update();
 
-        if(rb.linearVelocityY<0 && !player.isGroundCheck)
-        {
+        if (rb.linearVelocityY < 0 && !player.isGroundCheck)
             fsm.ChangeState(player.fallState);
-        }
 
         if (player.InputAction.Player.Jump.WasPerformedThisFrame())
-        {
             fsm.ChangeState(player.jumpState);
-        }
+
         if (player.InputAction.Player.Attack.WasPerformedThisFrame())
-        {
             fsm.ChangeState(player.attackState);
-        }
+        
         if (player.InputAction.Player.Counter.WasPerformedThisFrame())
-        {
             fsm.ChangeState(player.counterAttackState);
-        }
+        
+        if (player.InputAction.Player.SwordThrow.WasPerformedThisFrame() && skillManager.swordThrow.CanUseSkills())
+            fsm.ChangeState(player.swordThrowState);
     }
 }

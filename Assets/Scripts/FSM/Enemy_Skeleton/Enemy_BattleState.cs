@@ -3,6 +3,7 @@ using UnityEngine;
 public class Enemy_BattleState : EnemyState
 {
     private Transform player;
+    private Transform lastTarget;
     private float lastTimeWasInBattle;
     public Enemy_BattleState(FiniteStateMachine finiteStateMachine, string stateName, Enemy enemy) : base(finiteStateMachine, stateName, enemy)
     {
@@ -17,7 +18,7 @@ public class Enemy_BattleState : EnemyState
 
         if (shouldRetreat())
         {
-            rb.linearVelocity = new Vector2(enemy.retreatVelocity.x * -DirectionToPlayer(), enemy.retreatVelocity.y);
+            rb.linearVelocity = new Vector2((enemy.retreatVelocity.x*enemy.activeSlowMultiplier) * -DirectionToPlayer(), enemy.retreatVelocity.y);
             enemy.HandleFlip(DirectionToPlayer());
         }
     }
@@ -26,7 +27,10 @@ public class Enemy_BattleState : EnemyState
         base.Update();
 
         if (enemy.PlayerDetection())
+        {
+            UpdateTargetIfNeeded();
             UpdateBattleTimer();
+        }
 
         if (IsBattleTimeOver())
             fsm.ChangeState(enemy.idleState);
@@ -34,13 +38,24 @@ public class Enemy_BattleState : EnemyState
         if (WithInAttackRange() && enemy.PlayerDetection())
             fsm.ChangeState(enemy.attackState);
         else
-            enemy.SetVelocity(enemy.battleMoveSpeed * DirectionToPlayer(), rb.linearVelocity.y);
+            enemy.SetVelocity(enemy.GetBattleMoveSpeed() * DirectionToPlayer(), rb.linearVelocity.y);
 
     }
     private void UpdateBattleTimer() => lastTimeWasInBattle = Time.time;
     private bool IsBattleTimeOver() => Time.time - lastTimeWasInBattle > enemy.battleTimeDuration;
     private bool WithInAttackRange() => DistancetoPlayer() < enemy.attackDistance;
     private bool shouldRetreat() => DistancetoPlayer() < enemy.retreatMinDistance;
+    private void UpdateTargetIfNeeded()
+    {
+        if (!enemy.PlayerDetection()) return;
+
+        Transform newTarget = enemy.PlayerDetection().transform;
+        if (newTarget != lastTarget)
+        {
+            lastTarget=newTarget;
+            player = newTarget;
+        }
+    }
 
     private float DistancetoPlayer()
     {

@@ -1,15 +1,16 @@
+using Unity.Cinemachine;
 using UnityEngine;
 
-public abstract class PlayerState:EntityState
+public abstract class PlayerState : EntityState
 {
     protected Player player;
     protected Player_SkillManager skillManager;
-    public PlayerState(FiniteStateMachine finiteStateMachine,string stateName, Player player) :base (finiteStateMachine, stateName)
+    public PlayerState(FiniteStateMachine finiteStateMachine, string stateName, Player player) : base(finiteStateMachine, stateName)
     {
         this.player = player;
         anim = player.animator;
         rb = player.rb;
-        skillManager= player.skillManager;
+        skillManager = player.skillManager;
         entityStats = player.entityStats;
     }
     public override void Update()
@@ -20,6 +21,17 @@ public abstract class PlayerState:EntityState
             skillManager.dash.SetSkillOnCoolDown();
             fsm.ChangeState(player.dashState);
         }
+
+        if (player.InputAction.Player.Ultimate.WasPressedThisFrame() && skillManager.domainExpansion.CanUseSkills())
+        {
+            if (skillManager.domainExpansion.InstantDomain())
+                skillManager.domainExpansion.CreateDomain();
+            else
+                fsm.ChangeState(player.domainExpansionState);
+
+            skillManager.domainExpansion.SetSkillOnCoolDown();
+        }
+
     }
     public override void UpdateAnimationParameter()
     {
@@ -28,12 +40,15 @@ public abstract class PlayerState:EntityState
     }
     private bool canDash()
     {
-        if(!skillManager.dash.CanUseSkills())return false;
+        if (!skillManager.dash.CanUseSkills()) 
+            return false;
 
-        if (player.isWallDetected) return false
-                ;
-        if (fsm.currentState == player.dashState) return false;
-
+        if (player.isWallDetected) 
+            return false;
+        
+        if (fsm.currentState == player.dashState || fsm.currentState==player.domainExpansionState) 
+            return false;
+        
         return true;
     }
 }

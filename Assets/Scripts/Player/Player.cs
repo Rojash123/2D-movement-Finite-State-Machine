@@ -9,10 +9,10 @@ public class Player : Entity
 {
     public static event Action OnPlayerDeath;
 
-    public Player_SkillManager skillManager {  get; private set; }
+    public Player_SkillManager skillManager { get; private set; }
     public Entity_Health playerHealth { get; private set; }
-
     public Player_VFX vfx { get; private set; }
+    public Entity_StatusHandler statusHandler { get; private set; }
 
 
     [Header("Player Input")]
@@ -31,7 +31,12 @@ public class Player : Entity
     public float dashDuration = 0.25f;
     public float dashSpeed = 20f;
 
+    [Header("Special Ability")]
+    public float riseSpeed = 25f;
+    public float riseMaxDistance = 3;
+
     public Vector2 moveVector;
+    public Vector2 mousePositionVector;
 
     #region Finite State Machine
     public IdleState idleState { get; private set; }
@@ -46,12 +51,16 @@ public class Player : Entity
     public Player_DeadState deadState { get; private set; }
     public playerCounterAttackState counterAttackState { get; private set; }
 
+    public Player_SwordThrowState swordThrowState { get; private set; }
+    public Player_DomainExpansionState domainExpansionState { get; private set; }
+
     #endregion
 
     protected override void Awake()
     {
         base.Awake();
 
+        statusHandler = GetComponent<Entity_StatusHandler>();
         skillManager = GetComponent<Player_SkillManager>();
         playerHealth = GetComponent<Entity_Health>();
         vfx = GetComponent<Player_VFX>();
@@ -67,6 +76,8 @@ public class Player : Entity
         jumpAttackState = new(fsm, "playerjumpattack", this);
         deadState = new(fsm, "dead", this);
         counterAttackState = new(fsm, "counterattack", this);
+        swordThrowState = new(fsm, "Swordthrow", this);
+        domainExpansionState=new(fsm,"jumpFall",this);
     }
 
     protected override void Start()
@@ -74,20 +85,29 @@ public class Player : Entity
         base.Start();
         fsm.InititalizeMethod(idleState);
         InputAction = inputReader.playerMovement;
-        InputAction.Player.Spell.performed += ctx=>skillManager.shard.TryUSeSkill();
+        InputAction.Player.Spell.performed += ctx => skillManager.shard.TryUSeSkill();
+        InputAction.Player.Spell.performed += ctx => skillManager.timeEcho.TryUSeSkill();
     }
 
     private void OnEnable()
     {
         inputReader.OnPlayerMove += HandleMove;
+        inputReader.OnMouseMovePosition += SaveMousePosition;
     }
+
+    private void SaveMousePosition(Vector2 position)
+    {
+        mousePositionVector = position;
+    }
+
     private void OnDisable()
     {
         inputReader.OnPlayerMove -= HandleMove;
+        inputReader.OnMouseMovePosition -= SaveMousePosition;
     }
 
     public void TeleportPlayer(Vector3 position) => transform.position = position;
-    
+
 
     public void DisableInput()
     {
@@ -109,7 +129,7 @@ public class Player : Entity
         Vector2 originalWallJump = wallJumpDirection;
         Vector2 originalJumpAttackVelocity = jumpAttackVelocity;
         Vector2[] originalAttackVelocity = new Vector2[attackVelocity.Length];
-        Array.Copy(attackVelocity,originalAttackVelocity, attackVelocity.Length);
+        Array.Copy(attackVelocity, originalAttackVelocity, attackVelocity.Length);
 
         float speedMultiplier = 1 - slowMultiplier;
 
@@ -119,9 +139,9 @@ public class Player : Entity
         wallJumpDirection *= speedMultiplier;
         jumpAttackVelocity *= speedMultiplier;
 
-        for (int i = 0; i < attackVelocity.Length; i++) 
+        for (int i = 0; i < attackVelocity.Length; i++)
         {
-            originalAttackVelocity[i]*=speedMultiplier;
+            originalAttackVelocity[i] *= speedMultiplier;
         }
         yield return new WaitForSeconds(duration);
 
@@ -130,7 +150,7 @@ public class Player : Entity
         animator.speed = originalAnimSpeed;
         wallJumpDirection = originalWallJump;
         jumpAttackVelocity = originalJumpAttackVelocity;
-        attackVelocity= originalAttackVelocity;
+        attackVelocity = originalAttackVelocity;
         for (int i = 0; i < originalAttackVelocity.Length; i++)
         {
             attackVelocity[i] = originalAttackVelocity[i];

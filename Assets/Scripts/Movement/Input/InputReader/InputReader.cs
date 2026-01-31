@@ -12,6 +12,8 @@ public class InputReader : ScriptableObject, IPlayerActions
     public event Action<bool> OnPlayerAttack;
     public event Action<bool> OnPlayerDash;
     public event Action<bool> OnPlayerSpellPressed;
+    public event Action<Vector2> OnMouseMovePosition;
+
     public event Action<Vector2> OnPlayerMove;
     private void OnEnable()
     {
@@ -79,5 +81,22 @@ public class InputReader : ScriptableObject, IPlayerActions
         {
             OnPlayerSpellPressed?.Invoke(false);
         }
+    }
+
+    public void OnSwordThrow(InputAction.CallbackContext context)
+    {
+    }
+
+    public void OnMousePosition(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            OnMouseMovePosition?.Invoke(context.ReadValue<Vector2>());
+        }
+
+    }
+
+    public void OnUltimate(InputAction.CallbackContext context)
+    {
     }
 }

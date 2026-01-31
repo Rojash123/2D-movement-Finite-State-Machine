@@ -127,14 +127,15 @@ public class Skill_Shard : Skill_Base
         if (skillUpgradeType == SkillUpgradeType.Shard_Teleport || skillUpgradeType == SkillUpgradeType.Shard_TeleportHealthRewind)
             currentShard.OnShardExplode += ForceCoolDown;
     }
-    public void CreateRawShard()
+    public void CreateRawShard(Transform target = null, bool shardCanMove = false)
     {
-        bool canMove = Unlocked(SkillUpgradeType.Shard_MoveToEnemy) || Unlocked(SkillUpgradeType.Shard_MultiCast);
+        bool canMove = shardCanMove != false ? shardCanMove: Unlocked(SkillUpgradeType.Shard_MoveToEnemy)
+            || Unlocked(SkillUpgradeType.Shard_MultiCast);
+
         GameObject shard = Instantiate(shardPrefab, transform.position, Quaternion.identity);
-
-        shard.GetComponent<SkillObject_Shard>().SetupShard(this,detonationTime, canMove, shardSpeed);
-
+        shard.GetComponent<SkillObject_Shard>().SetupShard(this, detonationTime, canMove, shardSpeed, target);
     }
+
     private void ForceCoolDown()
     {
         if (!OnCooldown())

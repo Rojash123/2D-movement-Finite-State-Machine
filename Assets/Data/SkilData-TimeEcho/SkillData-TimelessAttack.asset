@@ -13,6 +13,21 @@ MonoBehaviour:
   m_Name: SkillData-TimelessAttack
   m_EditorClassIdentifier: 
   cost: 2
+  unlockByDefault: 0
+  skillType: 1
+  upgradeData:
+    skillUpgradeType: 16
+    coolDown: 0
+    damageScale:
+      physical: 1
+      elemental: 1
+      chillDuration: 3
+      chillSlowMultiplier: 0.2
+      burnDuration: 3
+      burnDamageScale: 1
+      shockDuration: 3
+      shockDamageScale: 1
+      shockCharge: 0.4
   skillName: Timeless Attack
   Description: The clone can perform 1 attack
   skillIcon: {fileID: -427979783, guid: 06186dbf79eb484439595d4e93931953, type: 3}

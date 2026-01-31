@@ -20,9 +20,9 @@ public class Entity : MonoBehaviour
     public float wallSlidemultiplier;
 
     [Header("Collission Detection")]
+    public LayerMask whatIsGround;
     [SerializeField] private float groundCheckDistance;
     [SerializeField] private float wallCheckDistance;
-    [SerializeField] protected LayerMask whatIsGround;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private Transform primaryWallCheck;
     [SerializeField] private Transform secondaryWallCheck;
@@ -69,17 +69,26 @@ public class Entity : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
     }
 
-    public virtual void SlowDownPlayer(float duration, float slowMultiplier)
+    public virtual void SlowDownPlayer(float duration, float slowMultiplier, bool overrideSlowEffect = false)
     {
-        if(slowDownCoroutine != null)
-            StopCoroutine (slowDownCoroutine);
+        if (slowDownCoroutine != null)
+        {
+            if (overrideSlowEffect)
+                StopCoroutine(slowDownCoroutine);
+            else return;
+        }
 
-        slowDownCoroutine = StartCoroutine(SlowDownEntityCoroutine(duration,slowMultiplier));
+        slowDownCoroutine = StartCoroutine(SlowDownEntityCoroutine(duration, slowMultiplier));
     }
 
-    protected virtual IEnumerator SlowDownEntityCoroutine(float duration,float slowMultiplier)
+    protected virtual IEnumerator SlowDownEntityCoroutine(float duration, float slowMultiplier)
     {
         yield return null;
+    }
+
+    public virtual void StopSlowDown()
+    {
+        slowDownCoroutine= null;
     }
     protected virtual void Start()
     {
