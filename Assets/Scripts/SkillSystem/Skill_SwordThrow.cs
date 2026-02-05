@@ -10,12 +10,12 @@ public class Skill_SwordThrow : Skill_Base
     [SerializeField] private GameObject swordPrefab;
     [Range(0, 10)]
     [SerializeField] private float throwPower = 5f;
-    [SerializeField] private float regularThrowPower=5f;
 
 
     [Header("Pierce Sword Upgrade")]
     [SerializeField] private GameObject swordPiercePrefab;
     public int pierceAmount = 2;
+    [Range(0, 10)]
     [SerializeField] private float pierceThrowPower = 5f;
 
 
@@ -24,6 +24,7 @@ public class Skill_SwordThrow : Skill_Base
     public int maxDistance = 5;
     public float attackPerSecondTimer = 6;
     public float maxDuration = 6;
+    [Range(0, 10)]
     [SerializeField] private float spinThrowPower = 5f;
 
 
@@ -31,6 +32,7 @@ public class Skill_SwordThrow : Skill_Base
     [SerializeField] private GameObject bounceSwordPrefab;
     public int bounceCount = 5;
     public float bounceSpeed = 12;
+    [Range(0, 10)]
     [SerializeField] private float bounceThrowPower = 5f;
 
 
@@ -105,7 +107,7 @@ public class Skill_SwordThrow : Skill_Base
     private void UpdateThrowPower()
     {
         if (Unlocked(SkillUpgradeType.SwordThrow))
-           currentThrowPower= regularThrowPower;
+           currentThrowPower= throwPower;
 
         if (Unlocked(SkillUpgradeType.SwordThrow_Pierce))
             currentThrowPower = pierceThrowPower;
@@ -124,6 +126,7 @@ public class Skill_SwordThrow : Skill_Base
     {
         foreach (Transform t in dots)
             t.gameObject.SetActive(enable);
+
     }
     private Transform[] GenerateDots()
     {

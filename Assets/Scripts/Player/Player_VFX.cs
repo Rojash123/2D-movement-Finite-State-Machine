@@ -10,6 +10,11 @@ public class Player_VFX : Entity_VFX
     [SerializeField] private GameObject imageEchoPrefabVFX;
 
     private Coroutine imageEchoCO;
+
+    public void CreateEffectOf(GameObject effect, Transform target)
+    {
+        Instantiate(effect, target.position,Quaternion.identity);
+    }
     public void DoImageEffect(float duration)
     {
         if(imageEchoCO!=null)

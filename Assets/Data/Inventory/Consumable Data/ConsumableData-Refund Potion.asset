@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034f79eb2543e18418968d4efd093cfb, type: 3}
+  m_Name: ConsumableData-Refund Potion
+  m_EditorClassIdentifier: 
+  itemName: Refund Potion
+  itemIcon: {fileID: 390794358, guid: 0d7b7f7f6b46755419c1222dcda0c38c, type: 3}
+  itemType: 4
+  maxSize: 1
+  itemEffect: {fileID: 11400000, guid: 3a5429aa260cdba4bbc9fa23d2b3dcf1, type: 2}

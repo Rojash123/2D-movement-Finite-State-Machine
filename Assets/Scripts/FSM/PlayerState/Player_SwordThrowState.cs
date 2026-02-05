@@ -35,15 +35,14 @@ public class Player_SwordThrowState : PlayerState
         }
         if (player.InputAction.Player.SwordThrow.WasReleasedThisFrame() || triggerCalled)
         {
-            Debug.Log("Idle");
             fsm.ChangeState(player.idleState);
         }
     }
     public override void ExitState()
     {
-        base.ExitState();
-        anim.SetBool("SwordthrowPerformed", false);
         skillManager.swordThrow.EnableDots(false);
+        anim.SetBool("SwordthrowPerformed", false);
+        base.ExitState();
     }
 
     private Vector2 DirectionToMouse()
