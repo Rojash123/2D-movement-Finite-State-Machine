@@ -1,10 +1,11 @@
 using System;
-using System.Diagnostics.Tracing;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Entity_Health : MonoBehaviour, IDamageable
 {
+    public event Action OnDamageTaken;
+
     private Slider healtBar;
     private Entity_VFX entityVfx;
     private Entity entity;
@@ -72,6 +73,8 @@ public class Entity_Health : MonoBehaviour, IDamageable
         ReduceHealth(physicalFinalDamage + elementalfinalDamage);
 
         lastDamageTaken = physicalFinalDamage + elementalfinalDamage;
+
+        OnDamageTaken?.Invoke();
 
         return true;
     }

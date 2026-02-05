@@ -13,6 +13,11 @@ public class Entity_Stats : MonoBehaviour
     public Stat_OffensiveGroup offense;
     public Stat_DefensiveGroup defense;
 
+    protected virtual void Awake()
+    {
+
+    }
+
     public float GetMaxHealth()
     {
         float baseHp = resource.maxHealth.GetValue;
@@ -22,24 +27,20 @@ public class Entity_Stats : MonoBehaviour
     }
     public float GetPhysicalDamage(out bool isCrit, float scaleFactor = 1)
     {
-        float baseDamage = offense.damage.GetValue;
-        float bonusDamage = major.strength.GetValue;
-
-        float totalBaseDamage = baseDamage + bonusDamage;
-
-        float baseCritChance = offense.critChance.GetValue;
-        float bonusCritChance = major.aligity.GetValue * 0.3f;
-        float critChance = baseCritChance + bonusCritChance;
-
-        float baseCritPower = offense.criticalPower.GetValue;
-        float bonusCritPower = major.strength.GetValue * 0.5f;
-        float critPower = (baseCritPower + bonusCritPower) / 100;
+        float baseDamage = GetBaseDamage();
+        float critChance = GetCritChance();
+        float critPower = GetCritPower() / 100;
 
         isCrit = Random.Range(0, 100) < critChance;
 
-        float finalDamage = isCrit ? totalBaseDamage * critPower : totalBaseDamage;
+        float finalDamage = isCrit ? baseDamage * critPower : baseDamage;
         return finalDamage*scaleFactor;
     }
+
+    public float GetBaseDamage()=>offense.damage.GetValue+major.strength.GetValue;
+    public float GetCritChance()=>offense.critChance.GetValue+major.aligity.GetValue*0.3f;
+    public float GetCritPower() => offense.criticalPower.GetValue + major.strength.GetValue * 0.5f;
+
     public float GetElementalDamage(out ElementType element,float scaleFactor=1)
     {
         float fireDamage = offense.fireDamage.GetValue;
@@ -81,9 +82,7 @@ public class Entity_Stats : MonoBehaviour
 
     public float GetArmorMitigation(float reduction)
     {
-        float baseArmor = defense.armor.GetValue;
-        float bonusArmor = major.vitality.GetValue;
-        float totalArmor = baseArmor + bonusArmor;
+        float totalArmor = GetBaseArmor();
 
         float actualArmor = totalArmor * Mathf.Clamp01(1 - reduction);
 
@@ -91,6 +90,8 @@ public class Entity_Stats : MonoBehaviour
         mitigation = Mathf.Clamp(mitigation, 0, 0.85f);
         return mitigation;
     }
+
+    public float GetBaseArmor() => defense.armor.GetValue + major.vitality.GetValue;
     public float GetEmentalResistance(ElementType element)
     {
         float baseResistance = 0;

@@ -61,6 +61,8 @@ public class UI_Treenode : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void Refund()
     {
+        if (isUnlocked = false || skillData.unlockByDefault) return;
+
         isUnlocked = false;
         isLocked = false;
         skillTree.AddSkillPoints(skillData.cost);

@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class SkillObject_SwordSpin : SkillObject_Sword
 {
-    private int maxDistance;
     private float attackPerSecond;
     private float attackTimer;
     private float maxDuration;
